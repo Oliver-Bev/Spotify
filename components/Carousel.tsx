@@ -3,6 +3,11 @@
 import React, { useState, useMemo, useEffect } from "react";
 import Image from "next/image";
 
+
+const MY_BUCKET_NAME = 'Imgages'; 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+
 type CarouselProps = {
   images: { src: string; alt?: string }[];
   itemsPerView?: number;
@@ -15,10 +20,10 @@ export default function Carousel({
   gap = 16,
 }: CarouselProps) {
   const total = images.length;
-  const CLONE_COUNT = itemsPerView;
-  const itemWidthPercent = 50 / itemsPerView;
 
- 
+  const CLONE_COUNT = itemsPerView;
+  const itemWidthPercent = 50 / itemsPerView; 
+
   const extendedImages = useMemo(() => {
     if (total === 0) return [];
     const headClones = images.slice(0, CLONE_COUNT);
@@ -30,8 +35,17 @@ export default function Carousel({
   const [index, setIndex] = useState(initialIndex);
   const [withTransition, setWithTransition] = useState(true);
 
+  const buildSupabaseUrl = (fileName: string): string => {
+    if (!SUPABASE_URL) {
+      console.error("Błąd: NEXT_PUBLIC_SUPABASE_URL nie jest zdefiniowany.");
+      return fileName; 
+    }
+    if (fileName.startsWith('http')) return fileName; 
+
+    return `${SUPABASE_URL}/storage/v1/object/public/${MY_BUCKET_NAME}/${fileName}`;
+  };
+
   useEffect(() => {
-    
     setIndex(initialIndex);
   }, [initialIndex, total]);
 
@@ -44,10 +58,9 @@ export default function Carousel({
     if (!total) return;
     const lastRealIndex = CLONE_COUNT + total - 1;
 
-   
     if (index === lastRealIndex) {
       goToIndex(index + 1, true);
-  
+ 
       setTimeout(() => {
         goToIndex(initialIndex, false);
       }, 300);
@@ -71,24 +84,32 @@ export default function Carousel({
     }
   };
 
-  const trackWidthPercent = extendedImages.length * itemWidthPercent;
+  const trackWidthPercent = extendedImages.length * itemWidthPercent; 
+
+  const elementWidthStyle = {
+      width: `${itemWidthPercent}%`,
+      minWidth: `${itemWidthPercent}%`,
+  };
+
+  const transformValue = `translateX(-${index * itemWidthPercent}%)`; 
+
 
   return (
     <div className="relative w-full py-6">
       
+   
       <button
         aria-label="Previous"
         onClick={prev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-black shadow transition hover:scale-105"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-1 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-black shadow transition hover:scale-105"
       >
         ‹
       </button>
 
-     
       <button
         aria-label="Next"
         onClick={next}
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-black shadow transition hover:scale-105"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-1 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-black shadow transition hover:scale-105"
       >
         ›
       </button>
@@ -97,31 +118,37 @@ export default function Carousel({
         <div
           className={`flex ${withTransition ? "transition-transform duration-300 ease-in-out" : ""}`}
           style={{
-            width: `${trackWidthPercent}%`,
+            width: `${trackWidthPercent}%`, 
             gap: `${gap}px`,
-            transform: `translateX(-${index * itemWidthPercent}%)`,
+            transform: transformValue 
           }}
         >
-          {extendedImages.map((img, i) => (
-            <div
-              key={`${img.src}-${i}`}
-              className="flex-shrink-0"
-              style={{
-                width: `${itemWidthPercent}%`,
-                minWidth: `${itemWidthPercent}%`,
-              }}
-            >
-              <div className="mx-auto max-w-xs overflow-hidden rounded-lg bg-slate-800 shadow-md">
-                <Image
-                  src={img.src}
-                  alt={img.alt ?? `slide-${i}`}
-                  width={800}
-                  height={800}
-                  className="w-full h-auto object-cover"
-                />
+          {extendedImages.map((img, i) => {
+            
+            const finalSrc = buildSupabaseUrl(img.src);
+
+            return (
+              <div
+                key={`${img.src}-${i}`}
+                className="flex-shrink-0"
+                style={{
+                  ...elementWidthStyle,
+                }}
+              >
+                <div className="mx-auto max-w-xs overflow-hidden rounded-lg bg-slate-800 shadow-md">
+                  <Image
+                    
+                    src={finalSrc} 
+                    alt={img.alt ?? `slide-${i}`}
+              
+                    width={250}
+                    height={250}
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
