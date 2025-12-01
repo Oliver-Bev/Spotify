@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import Controls from "@/components/Controls";
-import Header from "@/components/Header";
-import { Plus } from "lucide-react";
-import CreatePlaylist from "@/components/createPlaylist"; // <-- IMPORT NOWEGO KOMPONENTU
+import React, { useState } from 'react';
+import Controls from '@/components/Controls';
+import Header from '@/components/Header';
+import { Plus } from 'lucide-react';
+import CreatePlaylist from '@/components/createPlaylist';
+import TracksList from '@/components/TracksList';
 
 export default function LibraryPage() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +19,7 @@ export default function LibraryPage() {
 
       <div className="pt-5 pl-5 text-3xl">Twoje Playlisty:</div>
 
-      <div className="flex flex-col justify-center items-center space-y-5 top-1/2 mt-20">
+      <div className="flex flex-col justify-center items-center space-y-5 mt-20">
         <p>Aktualnie nie masz żadnych playlist</p>
 
         <div
@@ -30,8 +31,12 @@ export default function LibraryPage() {
         </div>
       </div>
 
-      {/* KOMONENT MODALA */}
       {isOpen && <CreatePlaylist onClose={closeModal} />}
+
+      <div className="p-8">
+        <h1 className="text-2xl mb-4">Twoje utwory</h1>
+        <TracksList />
+      </div>
 
       <Controls />
     </div>

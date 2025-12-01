@@ -13,7 +13,7 @@ export default function CreatePlaylist({ onClose }: { onClose: () => void }) {
 
     console.log("Dodano playlistę:", name);
 
-    // tu zrobisz zapis do supabase później
+    
 
     onClose();
   };
@@ -28,7 +28,7 @@ export default function CreatePlaylist({ onClose }: { onClose: () => void }) {
 
       {/* OKNO */}
       <div
-        className="relative bg-gray-900 text-white rounded-lg p-6 w-11/12 max-w-md shadow-lg"
+        className="relative bg-transparent text-white rounded-lg p-6 w-11/12 max-w-md shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="text-xl font-semibold mb-4">Nowa playlista</h2>
@@ -39,7 +39,7 @@ export default function CreatePlaylist({ onClose }: { onClose: () => void }) {
             placeholder="Nazwa playlisty"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="w-full p-2 rounded bg-black/70 border border-white/20"
+            className="w-full p-2 rounded bg-black/70 border border-white/20 focus:outline-none"
             autoFocus
           />
 
