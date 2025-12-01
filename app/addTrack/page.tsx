@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-
+console.log('SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
 function safeKey(folder: string, filename: string, { encode = false, maxLength = 1024 } = {}): string {
   let name = filename.normalize('NFKC');
 

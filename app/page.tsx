@@ -62,7 +62,7 @@ function AlbumCard({ title, src }: { title: string; src: string }) {
     );
 }
 
-export function ImageDisplay({ fileName, altText, width, height }: { fileName: string, altText: string, width: number, height: number }) {
+function ImageDisplay({ fileName, altText, width, height }: { fileName: string, altText: string, width: number, height: number }) {
 
     const imageUrl = `${SUPABASE_URL}/storage/v1/object/public/${MY_BUCKET_NAME}/${fileName}`;
     
