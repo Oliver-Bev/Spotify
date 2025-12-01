@@ -1,23 +1,39 @@
-import React from "react";
-import type { Metadata } from "next";
+"use client";
+
+import React, { useState } from "react";
 import Controls from "@/components/Controls";
 import Header from "@/components/Header";
-import { Frown, Plus } from 'lucide-react';
+import { Plus } from "lucide-react";
+import CreatePlaylist from "@/components/createPlaylist"; // <-- IMPORT NOWEGO KOMPONENTU
 
 export default function LibraryPage() {
-    return (
+  const [isOpen, setIsOpen] = useState(false);
 
-        <div className="min-h-screen w-full bg-black text-white pt-16 ">
-            <Header />
-            <div className="pt-5 pl-5 text-3xl">Twoje Playlisty:</div>
+  const openModal = () => setIsOpen(true);
+  const closeModal = () => setIsOpen(false);
 
-            <div className="flex flex-col justify-center items-center space-y-5 top-1/2 mt-20">
-                <p>Aktualnie nie masz żadnych playlist</p>
-                
-                <div className="border-2 rounded-lg border border-white/20 h-auto w-auto p-3 cursor-pointer">Stwórz nową</div>
-            </div>
+  return (
+    <div className="min-h-screen w-full bg-black text-white pt-16">
+      <Header />
 
-            
-             <Controls />
+      <div className="pt-5 pl-5 text-3xl">Twoje Playlisty:</div>
+
+      <div className="flex flex-col justify-center items-center space-y-5 top-1/2 mt-20">
+        <p>Aktualnie nie masz żadnych playlist</p>
+
+        <div
+          className="border-2 rounded-lg border-white/20 p-3 cursor-pointer flex items-center gap-2"
+          onClick={openModal}
+        >
+          <Plus size={16} />
+          <span>Stwórz nową</span>
         </div>
-    );}
+      </div>
+
+      {/* KOMONENT MODALA */}
+      {isOpen && <CreatePlaylist onClose={closeModal} />}
+
+      <Controls />
+    </div>
+  );
+}
