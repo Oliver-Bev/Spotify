@@ -2,9 +2,8 @@
 
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import { usePathname, useRouter } from "next/navigation"; 
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,29 +20,46 @@ export default function LoginPage() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { username } }
+        options: { data: { username } },
       });
-      if (error) return setError(error.message);
-   
-      await supabase.from("users").insert({ id: data.user.id, username });
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
+
+      const user = data.user;
+      if (!user) {
+        setError("User not created");
+        return;
+      }
+
+      await supabase.from("users").insert({
+        id: user.id,
+        username,
+      });
     } else {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
-        password
+        password,
       });
-      if (error) return setError(error.message);
+
+      if (error) {
+        setError(error.message);
+        return;
+      }
     }
   };
 
   return (
     <div className="min-h-screen -mt-10 flex items-center justify-center bg-black text-white text-center">
-
-<Link href="/" passHref>
-            <div className="flex flex-col w-10 left-2 top-10 h-10 items-center cursor-pointer hover:text-indigo-400 transition absolute">
-                
-                <div className="text-xs"><ArrowLeft size={32}/></div>
-            </div>
-        </Link>
+      <Link href="/" passHref>
+        <div className="flex flex-col w-10 left-2 top-10 h-10 items-center cursor-pointer hover:text-indigo-400 transition absolute">
+          <div className="text-xs">
+            <ArrowLeft size={32} />
+          </div>
+        </div>
+      </Link>
 
       <form
         onSubmit={handleSubmit}
@@ -61,6 +77,7 @@ export default function LoginPage() {
           className="w-full p-2 rounded bg-black/70 border border-white/20"
           required
         />
+
         {isRegister && (
           <input
             type="text"
@@ -71,6 +88,7 @@ export default function LoginPage() {
             required
           />
         )}
+
         <input
           type="password"
           placeholder="Hasło"
