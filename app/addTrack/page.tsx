@@ -1,5 +1,5 @@
 'use client';
-
+export const dynamic = 'force-dynamic';
 import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 console.log('SUPABASE URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
